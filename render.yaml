@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: cortex-mark-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_CONNECT_URL
+        sync: false
+      - key: JWT_PASSWORD
+        sync: false
+    healthCheckPath: /api/v1/user/health
+
