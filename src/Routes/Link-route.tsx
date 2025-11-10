@@ -44,7 +44,7 @@ Brainroute.post("/brain/share",userMiddleware, async (req, res) => {
 
           })
            res.json({
-            message: "/share/" + hash
+            hash: hash
           })
         }
 

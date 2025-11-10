@@ -30,7 +30,7 @@ Brainroute.post("/brain/share", userMiddleware, async (req, res) => {
                     userId: req.userId,
                 });
                 res.json({
-                    message: "/share/" + hash
+                    hash: hash
                 });
             }
         }
