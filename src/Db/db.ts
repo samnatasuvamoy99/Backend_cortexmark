@@ -1,19 +1,27 @@
 import mongoose from "mongoose";
 import {model, Schema} from "mongoose";
 
-//db connection
-async function main(){
 
+export async function connectDatabase(){
       try{
+            if (!process.env.MONGODB_CONNECT_URL) {
+              throw new Error("MONGODB_CONNECT_URL environment variable is not set");
+            }
             await mongoose.connect(process.env.MONGODB_CONNECT_URL as string)
      
-          console.log("monogdb connection successfully ");
+          console.log(" MongoDB connection successful");
+          return true;
       }
     catch(error:any){
-          console.log("connection error:" ,error.message);
+          console.error("❌ MongoDB connection error:", error.message);
+      
+          if (process.env.NODE_ENV === 'development') {
+            console.error("⚠️  Exiting in development mode due to database connection failure");
+            process.exit(1);
+          }
+          return false;
      };  
 }
-main();
 
 
 

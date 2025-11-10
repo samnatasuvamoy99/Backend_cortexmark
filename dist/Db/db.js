@@ -1,17 +1,26 @@
 import mongoose from "mongoose";
 import { model, Schema } from "mongoose";
-//db connection
-async function main() {
+//db connection - export function to be called explicitly
+export async function connectDatabase() {
     try {
+        if (!process.env.MONGODB_CONNECT_URL) {
+            throw new Error("MONGODB_CONNECT_URL environment variable is not set");
+        }
         await mongoose.connect(process.env.MONGODB_CONNECT_URL);
-        console.log("monogdb connection successfully ");
+        console.log("✅ MongoDB connection successful");
+        return true;
     }
     catch (error) {
-        console.log("connection error:", error.message);
+        console.error("❌ MongoDB connection error:", error.message);
+        // Don't exit in production, but log the error
+        if (process.env.NODE_ENV === 'development') {
+            console.error("⚠️  Exiting in development mode due to database connection failure");
+            process.exit(1);
+        }
+        return false;
     }
     ;
 }
-main();
 const UserSchema = new Schema({
     username: { type: String, unique: true },
     email: { type: String, unique: true },

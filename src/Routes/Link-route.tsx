@@ -76,7 +76,6 @@ Brainroute.post("/brain/share",userMiddleware, async (req, res) => {
 Brainroute.get("/brain/:shareLink",async (req, res) => {
 
   const hashlink = req.params.shareLink;
-  console.log(hashlink);
 
   try {
     const links = await LinkModel.findOne({
@@ -102,10 +101,9 @@ Brainroute.get("/brain/:shareLink",async (req, res) => {
     })
   
     if (!user) {
-      res.json({
+      return res.status(404).json({
         message: "Something went to be wrong check the link "
       })
-      return;
     }
   
     res.json({

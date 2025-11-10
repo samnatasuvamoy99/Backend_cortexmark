@@ -23,7 +23,7 @@ Contentroute.post("/addcontent", userMiddleware, async (req, res) => {
       title,
       link,
       type,
-      tages: [],
+      tags: [],
       userId: req.userId,
 
     })
@@ -32,9 +32,10 @@ Contentroute.post("/addcontent", userMiddleware, async (req, res) => {
     })
   }
   catch (err) {
-    res.status(504).json({
-      message: "You are not Signin...",
-      error: err
+    console.error("Error adding content:", err);
+    res.status(500).json({
+      message: "Failed to add content. Please try again.",
+      error: err instanceof Error ? err.message : "Unknown error"
 
     })
   }
@@ -55,9 +56,10 @@ Contentroute.get("/viewcontent", userMiddleware, async (req, res) => {
     })
   }
   catch (err) {
-    res.status(504).json({
-      message: "Something went to be wrong ...",
-      error: err
+    console.error("Error fetching content:", err);
+    res.status(500).json({
+      message: "Failed to fetch content. Please try again.",
+      error: err instanceof Error ? err.message : "Unknown error"
     })
   }
 
@@ -65,10 +67,6 @@ Contentroute.get("/viewcontent", userMiddleware, async (req, res) => {
 
 Contentroute.delete("/deletecontent/:contentId", userMiddleware, async (req, res) => {
   const contentId = req.params.contentId;
-    
-  console.log(contentId);
-  console.log("DELETE request for:", contentId, "by user:", req.userId);
-
 
   try {
     const result = await ContentModel.deleteOne({

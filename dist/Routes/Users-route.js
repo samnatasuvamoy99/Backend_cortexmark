@@ -22,13 +22,26 @@ Userroute.post("/signup", async (req, res) => {
             email: parsed.email,
             password: hashedPassword,
         });
-        res.json({ message: "User signed up successfully 😊" });
+        res.status(201).json({ message: "User signed up successfully 😊" });
     }
     catch (error) {
         if (error.name === "ZodError") {
             return res.status(400).json({ errors: error.errors });
         }
-        res.status(500).json({ message: "Something went wrong during signup.", error });
+        // Handle duplicate key error (MongoDB)
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern || {})[0];
+            if (field) {
+                return res.status(409).json({
+                    message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists. Please use a different ${field}.`
+                });
+            }
+            return res.status(409).json({
+                message: "A user with this information already exists. Please use different credentials."
+            });
+        }
+        console.error("Signup error:", error);
+        res.status(500).json({ message: "Something went wrong during signup.", error: error.message });
     }
 });
 Userroute.post("/signin", async (req, res) => {
@@ -54,18 +67,22 @@ Userroute.post("/signin", async (req, res) => {
             });
         }
         const password_match = await bcrypt.compare(password, user.password);
-        console.log(user);
         if (password_match) {
+            if (!process.env.JWT_PASSWORD) {
+                console.error("JWT_PASSWORD environment variable is not set");
+                return res.status(500).json({
+                    message: "Server configuration error. Please contact support."
+                });
+            }
             const token = jwt.sign({
                 id: user._id.toString()
             }, process.env.JWT_PASSWORD);
             res.json({
                 token
             });
-            console.log(token);
         }
         else {
-            res.json({
+            return res.status(403).json({
                 message: "invalid login details !!"
             });
         }

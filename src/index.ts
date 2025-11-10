@@ -1,6 +1,10 @@
-// ts express
+
 import dotenv from "dotenv";
+
 dotenv.config();
+
+
+import { connectDatabase } from './Db/db.js';
 
 import express from 'express';
 import { Userroute } from './Routes/Users-route.js';
@@ -11,12 +15,14 @@ import cors from "cors"
 const app = express();
 app.use(express.json());
 
-// CORS Configuration
+
+
+
 const allowedOrigins = [
   /^http:\/\/localhost:\d+$/,   // any localhost port
   /^chrome-extension:\/\//,     // chrome extensions
   "https://frontend-cortexmark.vercel.app",  // frontend deploy URL
-  process.env.FRONTEND_URL      // fallback to environment variable
+  process.env.FRONTEND_URL      
 ].filter(Boolean) as (string | RegExp)[]; 
 
 app.use(
@@ -34,7 +40,7 @@ app.use(
       if (isAllowed) {
         callback(null, true);
       } else {
-        console.log("🚫 Blocked by CORS:", origin);
+        console.log("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -56,12 +62,33 @@ app.get("/api/v1/user/health", (req, res) => {
 
 const PORT = process.env.PORT || 3009;
 
-if (process.env.VERCEL !== '1') {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+
+async function startServer() {
+ 
+  const dbConnected = await connectDatabase();
+  
+  if (!dbConnected && process.env.NODE_ENV === 'production') {
+    console.warn("Warning: Database connection failed, but server will start anyway.");
+    console.warn("API endpoints that require database will not work.");
+  }
+
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      if (dbConnected) {
+        console.log(`Server is ready to accept requests`);
+      } else {
+        console.log(`Server started but database is not connected`);
+      }
+    });
+  }
 }
 
+
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
+});
 
 export default app;
 
