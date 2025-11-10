@@ -11,41 +11,12 @@ import cors from "cors"
 const app = express();
 app.use(express.json());
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-
-//       if (!origin) return callback(null, true);
-
-
-//       const allowedOrigins = [
-//         /^http:\/\/localhost:\d+$/,        // any localhost port
-//         /^chrome-extension:\/\//,          // chrome extensions
-//         "https://deploy-cortex-mark.vercel.app"  // frontend deploy URL
-//       ];
-
-//       if (allowedOrigins.some((regex) => {
-//         if (typeof regex === 'string') {
-//           return origin === regex;
-//         }
-//         return regex.test(origin);
-//       })) {
-//         callback(null, true);
-//       } else {
-//         console.log(" Blocked by CORS:", origin);
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     credentials: true,
-//   })
-// );
-
+// CORS Configuration
 const allowedOrigins = [
   /^http:\/\/localhost:\d+$/,   // any localhost port
   /^chrome-extension:\/\//,     // chrome extensions
-  process.env.FRONTEND_URL
+  "https://frontend-cortexmark.vercel.app",  // frontend deploy URL
+  process.env.FRONTEND_URL      // fallback to environment variable
 ].filter(Boolean) as (string | RegExp)[]; // remove undefined entries
 
 app.use(
@@ -67,7 +38,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })

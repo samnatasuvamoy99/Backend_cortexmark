@@ -11,5 +11,7 @@ services:
         sync: false
       - key: JWT_PASSWORD
         sync: false
+      - key: FRONTEND_URL
+        value: https://frontend-cortexmark.vercel.app
     healthCheckPath: /api/v1/user/health
 

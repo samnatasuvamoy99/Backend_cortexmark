@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 import { model, Schema } from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
 //db connection
 async function main() {
     try {
