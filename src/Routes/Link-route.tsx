@@ -23,8 +23,7 @@ Brainroute.post("/brain/share",userMiddleware, async (req, res) => {
     try{
         const share = req.body.share;
     if (share){
-    
-        // if already exist the link then return the same link to the user...
+   
         const existingLink = await LinkModel.findOne({
           userId: req.userId
         })
@@ -36,7 +35,7 @@ Brainroute.post("/brain/share",userMiddleware, async (req, res) => {
           return;
         }
         else {
-           // if not exist then create new link 
+      
           const hash = Random(15);
           await LinkModel.create({
             hash: hash,
@@ -73,7 +72,7 @@ Brainroute.post("/brain/share",userMiddleware, async (req, res) => {
 
 })
 
-//another user click the brain/share link then they can  seen that user all contents
+
 Brainroute.get("/brain/:shareLink",async (req, res) => {
 
   const hashlink = req.params.shareLink;

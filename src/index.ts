@@ -17,7 +17,7 @@ const allowedOrigins = [
   /^chrome-extension:\/\//,     // chrome extensions
   "https://frontend-cortexmark.vercel.app",  // frontend deploy URL
   process.env.FRONTEND_URL      // fallback to environment variable
-].filter(Boolean) as (string | RegExp)[]; // remove undefined entries
+].filter(Boolean) as (string | RegExp)[]; 
 
 app.use(
   cors({
@@ -50,20 +50,18 @@ app.use("/api/v1/content", Contentroute);
 
 app.use("/api/v1/links", Brainroute);
 
-// Health check endpoint
 app.get("/api/v1/user/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
 });
 
 const PORT = process.env.PORT || 3009;
 
-// Only start the server if not in serverless environment (Vercel)
 if (process.env.VERCEL !== '1') {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
 
-// Export app for serverless environments (Vercel)
+
 export default app;
 
