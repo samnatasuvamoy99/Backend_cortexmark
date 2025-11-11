@@ -1,18 +1,23 @@
 import mongoose from "mongoose";
 import { model, Schema } from "mongoose";
-//db connection - export function to be called explicitly
 export async function connectDatabase() {
     try {
         if (!process.env.MONGODB_CONNECT_URL) {
+            console.error("❌ ERROR: MONGODB_CONNECT_URL environment variable is not set");
+            console.error("📝 Please create a .env file in the Backend directory with:");
+            console.error("   MONGODB_CONNECT_URL=mongodb+srv://username:password@cluster.mongodb.net/database");
+            console.error("   JWT_PASSWORD=your-secret-key");
             throw new Error("MONGODB_CONNECT_URL environment variable is not set");
         }
+        console.log("🔄 Attempting to connect to MongoDB...");
         await mongoose.connect(process.env.MONGODB_CONNECT_URL);
         console.log("✅ MongoDB connection successful");
         return true;
     }
     catch (error) {
         console.error("❌ MongoDB connection error:", error.message);
-        // Don't exit in production, but log the error
+        console.error("💡 Tip: Make sure your .env file exists in the Backend directory");
+        console.error("💡 Tip: Verify your MongoDB connection string is correct");
         if (process.env.NODE_ENV === 'development') {
             console.error("⚠️  Exiting in development mode due to database connection failure");
             process.exit(1);

@@ -2,7 +2,7 @@
 import dotenv from "dotenv";
 
 dotenv.config();
-
+dotenv.config({ path: ".env" });
 
 import { connectDatabase } from './Db/db.js';
 
@@ -19,7 +19,7 @@ app.use(express.json());
 
 
 const allowedOrigins = [
-  /^http:\/\/localhost:\d+$/,   // any localhost port
+  /^http:\/\/localhost:\d+$/,   // any localhost port (for local development)
   /^chrome-extension:\/\//,     // chrome extensions
   "https://frontend-cortexmark.vercel.app",  // frontend deploy URL
   process.env.FRONTEND_URL      
