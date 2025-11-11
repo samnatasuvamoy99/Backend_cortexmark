@@ -84,7 +84,7 @@ Brainroute.get("/brain/:shareLink",async (req, res) => {
   
     if (!links) {
        return res.status(404).json({
-        message: "Something went ot be wrong share link is invalid❌"
+        message: "Something went ot be wrong share link is invalid"
       })
       
     }
