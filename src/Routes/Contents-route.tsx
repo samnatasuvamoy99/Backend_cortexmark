@@ -28,7 +28,7 @@ Contentroute.post("/addcontent", userMiddleware, async (req, res) => {
 
     })
     return res.status(200).json({
-      message: "Content added successfully😊"
+      message: "Content added successfully"
     })
   }
   catch (err) {

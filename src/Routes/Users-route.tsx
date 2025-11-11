@@ -34,7 +34,7 @@ Userroute.post("/signup", async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "User signed up successfully 😊" });
+    res.status(201).json({ message: "User signed up successfully " });
   } catch (error: any) {
     if (error.name === "ZodError") {
       return res.status(400).json({ errors: error.errors });
