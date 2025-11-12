@@ -22,7 +22,7 @@ Userroute.post("/signup", async (req, res) => {
             email: parsed.email,
             password: hashedPassword,
         });
-        res.status(201).json({ message: "User signed up successfully 😊" });
+        res.status(201).json({ message: "User signed up successfully " });
     }
     catch (error) {
         if (error.name === "ZodError") {
