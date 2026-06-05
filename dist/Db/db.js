@@ -25,7 +25,9 @@ export async function connectDatabase() {
 const UserSchema = new Schema({
     username: { type: String, unique: true },
     email: { type: String, unique: true },
-    password: String
+    password: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 export const UserModel = model("users", UserSchema);
 const TagSchema = new Schema({

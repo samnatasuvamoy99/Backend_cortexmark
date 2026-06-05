@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import express from "express";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 export const Userroute = express.Router();
 
 
@@ -117,3 +118,85 @@ Userroute.post("/signin", async (req, res) => {
     })
   }
 })
+
+Userroute.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User with this email does not exist" });
+    }
+
+    // Generate secure random token
+    const token = crypto.randomBytes(20).toString("hex");
+
+    // Save token and expiry (expires in 1 hour) using updateOne to avoid TS type issues
+    await UserModel.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          resetPasswordToken: token,
+          resetPasswordExpires: new Date(Date.now() + 3600000)
+        }
+      }
+    );
+
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${token}`;
+
+    return res.status(200).json({
+      message: "Password reset link generated successfully",
+      resetUrl,
+      token
+    });
+  } catch (error: any) {
+    console.error("Forgot password error:", error);
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+      error: error.message
+    });
+  }
+});
+
+Userroute.post("/reset-password/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await UserModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Password reset token is invalid or has expired" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Update password and clear token
+    await UserModel.updateOne(
+      { _id: user._id },
+      {
+        $set: { password: hashedPassword },
+        $unset: { resetPasswordToken: "", resetPasswordExpires: "" }
+      }
+    );
+
+    return res.status(200).json({ message: "Password reset successful" });
+  } catch (error: any) {
+    console.error("Reset password error:", error);
+    return res.status(500).json({
+      message: "Something went wrong. Please try again.",
+      error: error.message
+    });
+  }
+});

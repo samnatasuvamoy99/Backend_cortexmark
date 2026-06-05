@@ -2,14 +2,20 @@ import mongoose from "mongoose";
 export declare function connectDatabase(): Promise<boolean>;
 export declare const UserModel: mongoose.Model<{
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 }, {}, {}, {}, mongoose.Document<unknown, {}, {
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 }, {}, mongoose.DefaultSchemaOptions> & {
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 } & {
@@ -18,14 +24,20 @@ export declare const UserModel: mongoose.Model<{
     __v: number;
 }, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, {
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 }, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 }>, {}, mongoose.ResolveSchemaOptions<mongoose.DefaultSchemaOptions>> & mongoose.FlatRecord<{
     password?: string | null;
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: NativeDate | null;
     username?: string | null;
     email?: string | null;
 }> & {

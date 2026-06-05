@@ -88,3 +88,23 @@ Contentroute.delete("/deletecontent/:contentId", userMiddleware, async (req, res
   }
 });
 
+Contentroute.get("/history", userMiddleware, async (req, res) => {
+  const userId = req.userId;
+  try {
+    const contents = await ContentModel.find({
+      userId: userId
+    }).sort({ createdAt: -1 }).populate("userId", "username");
+
+    res.json({
+      message: "Here is your content history",
+      content: contents
+    });
+  } catch (err) {
+    console.error("Error fetching content history:", err);
+    res.status(500).json({
+      message: "Failed to fetch content history. Please try again.",
+      error: err instanceof Error ? err.message : "Unknown error"
+    });
+  }
+});
+
